@@ -1,65 +1,144 @@
-import Image from "next/image";
+"use client"
+import AuroraHero from '@/components/_components/aurora-hero';
+// import FramerCard from '@/components/_components/framer-card';
+import Header from '@/components/_components/header';
+import HeroText from '@/components/_components/hero-text';
+import RocketText from '@/components/_components/rocket-text';
+import Section from '@/components/_components/section';
+import CustomCursor from '@/providers/CursorCustom';
+import SmoothScrollProvider from '@/providers/LenisSmoothProvider';
+import { ArrowRight } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import Link from 'next/link';
+import { useRef } from 'react'
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+function Page() {
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+
+  // Scroll del contenedor completo
+  const { scrollYProgress: containerScrollProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Ocultar solo el HeroText cuando scrollYProgress llegue a 1
+  const heroTextOpacity = useTransform(
+    containerScrollProgress,
+    [0, 0.5, 0.5001],
+    [1, 1, 0]
   );
+  const targetRef = useRef(null);
+
+  {/*
+    se utiliza el hook useScroll de framer-motion para obtener el
+    valor de scrollYProgress, que representa el progreso del
+    desplazamiento vertical como un valor entre 0 y 1.
+    Este valor se actualiza automáticamente a medida que el usuario
+    se desplaza por la página.
+    */}
+  const { scrollYProgress: horizontalScrollProgress } = useScroll({
+    target: targetRef,
+  });
+
+  {/*
+    utiliza el hook useTransform para transformar el valor de scrollYProgress
+    en un valor de desplazamiento horizontal (x). En este caso,
+    cuando scrollYProgress es 0, x es "1%", y cuando scrollYProgress es 1,
+    x es "-95%". Esto significa que el contenido del carrusel se desplazará
+    horizontalmente de "1%" a "-95%" a medida que el usuario se desplaza
+    verticalmente por la página.
+    */}
+  const x = useTransform(horizontalScrollProgress, [0, 1], ["1%", "-95%"]);
+
+  return (
+    <>
+      <CustomCursor />
+      <SmoothScrollProvider />
+
+      {/* AuroraHero y Header siempre fijos */}
+      <div className="w-full fixed top-0 left-0 right-0 h-screen ">
+        <AuroraHero>
+
+          <Header />
+
+        </AuroraHero>
+      </div>
+
+      <div ref={containerRef} className="w-full h-[1400vh] relative">
+        {/* HeroText que desaparece */}
+        <motion.div
+          className="w-full fixed top-0 left-0 right-0 pointer-events-none"
+          style={{
+            opacity: heroTextOpacity,
+          }}
+        >
+          <div ref={ref} className='w-full h-[700vh] '>
+            <div className='min-h-screen w-full flex justify-center items-center'>
+
+
+              <div className="container px-4 md:px-6 z-40 max-w-[1380px] mx-auto pointer-events-auto min-h-screen flex justify-center items-center">
+
+                <section className="py-12 md:py-12 lg:py-24 flex">
+                  <div className="container m-auto px-4 md:px-6">
+                    <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                      <div className="space-y-2">
+                        <HeroText
+                          scrollYProgress={scrollYProgress}
+                          rocketText={<RocketText scrollYProgress={scrollYProgress} />}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Espaciador invisible para los primeros 700vh */}
+        <div className='w-full h-[700vh]' />
+
+        {/* Contenido que aparece después */}
+        <section ref={targetRef} className="relative h-[300vh]">
+          <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+            <motion.div style={{ x }} className="flex">
+              {/* <div className="container px-4 md:px-6 max-w-[1380px] mx-auto pt-20">
+                <h1 className='text-6xl font-bold text-white'>HOLAAA</h1>
+                <p className='text-white mt-4'>Este contenido aparece después del hero</p>
+              </div> */}
+
+              <Section title={"projects"} >
+                {/* <FramerCard /> */}
+                {/* <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {repositorios.slice(0, 3).map((repo) => (
+                    <ProjectCard key={repo.title} {...repo} />
+                  ))}
+                </div> */}
+
+                <div className="mt-4 w-full flex justify-center">
+                  <Link href={"/projetos"} className=" text-[#858585] flex gap-1">
+                    Ver Todos los Projectos
+                    <ArrowRight />
+                  </Link>
+                </div>
+              </Section>
+
+
+
+            </motion.div>
+          </div>
+        </section>
+
+      </div>
+    </>
+  )
 }
+
+export default Page
