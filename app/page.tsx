@@ -5,17 +5,22 @@ import Header from '@/components/_components/header';
 import HeroText from '@/components/_components/hero-text';
 import RocketText from '@/components/_components/rocket-text';
 import Section from '@/components/_components/section';
+import SplashScreen from '@/components/_components/splash-screen';
 import CustomCursor from '@/providers/CursorCustom';
 import SmoothScrollProvider from '@/providers/LenisSmoothProvider';
 import { ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import Link from 'next/link';
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 function Page() {
-
+  const [showSplash, setShowSplash] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLDivElement>(null);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -59,6 +64,7 @@ function Page() {
 
   return (
     <>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <CustomCursor />
       <SmoothScrollProvider />
 
